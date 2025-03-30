@@ -42,12 +42,12 @@ int main() {
 
     // TODO: Step 5 - Compute and display min, max, and average temperature
     TemperatureRecord minTemp = findMin(tempDays, size);
-    TemperatureRecord maxTemp = findMin(tempDays, size);
+    TemperatureRecord maxTemp = findMax(tempDays, size);
     double avgTemp = findAverage(tempDays, size);
 
-    cout << "Minimum Temperature for Day " << minTemp.day << ": " << minTemp.temperature << endl;
-    cout << "Maximum Temperature for Day " << maxTemp.day << ": " << maxTemp.temperature << endl;
-    cout << "Average Temperature: " << avgTemp << endl;
+    cout << "Minimum Temperature was on Day " << minTemp.day << ": " << minTemp.temperature << " F" << endl;
+    cout << "Maximum Temperature was on Day " << maxTemp.day << ": " << maxTemp.temperature << " F" << endl;
+    cout << "Average Temperature for all: " << avgTemp << " F" << endl;
 
     return 0;
 }
@@ -58,9 +58,13 @@ void readTemperatures(TemperatureRecord tempDay[], int& size) {
 
     fstream tempFS;
     tempFS.open("temps.txt");
-    int size = 0;
 
-    while (size < 31 && tempFS >> tempDay[size].day >> tempDay[size].temperature) {
+    if (!tempFS) {  
+        cout << "Error: Unable to open temps.txt" << endl;
+        return;
+    }
+
+    while (size < MAX_DAYS && tempFS >> tempDay[size].day >> tempDay[size].temperature) {
         size++;
        
     }
@@ -70,15 +74,46 @@ void readTemperatures(TemperatureRecord tempDay[], int& size) {
 // TODO: Step 7 - Implement printTemperatures()
 // Print all stored temperatures in a formatted table
 void printTemperatures(const TemperatureRecord tempDay[], int size) {
-    
+    cout << "Day         Temperature" << endl;
+    cout << "**************************" << endl;
+
+    for (int i = 0; i < size; ++i) {
+        cout << tempDay[i].day << "         " << tempDay[i].temperature << " F" << endl;
+
+    }
 
 }
 
 // TODO: Step 8 - Implement findMin()
 // Return the TemperatureRecord with the lowest temperature
+TemperatureRecord findMin(const TemperatureRecord tempDay[], int size) {
+    TemperatureRecord minRecord = tempDay[0];
+    for (int i = 1; i < size; i++) {
+        if (tempDay[i].temperature < minRecord.temperature) {
+            minRecord = tempDay[i];
+        }
+    }
+    return minRecord;
+}
 
 // TODO: Step 9 - Implement findMax()
 // Return the TemperatureRecord with the highest temperature
+TemperatureRecord findMax(const TemperatureRecord tempDay[], int size) {
+    TemperatureRecord maxRecord = tempDay[0];
+    for (int i = 1; i < size; i++) {
+        if (tempDay[i].temperature > maxRecord.temperature) {
+            maxRecord = tempDay[i];
+        }
+    }
+    return maxRecord;
+}
 
 // TODO: Step 10 - Implement findAverage()
 // Compute and return the average temperature
+double findAverage(const TemperatureRecord tempDay[], int size) {
+    int sum = 0;
+    for (int i = 0; i < size; i++) {
+        sum += tempDay[i].temperature;
+    }
+    return (double)sum / size;
+}
